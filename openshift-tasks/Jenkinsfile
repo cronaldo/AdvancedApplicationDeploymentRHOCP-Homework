@@ -51,26 +51,26 @@ podTemplate(
          //failFast true
          parallel {
       // Using Maven run the unit tests
-        stage('Unit Tests') {
-          steps {
+          stage('Unit Tests') {
+            steps {
             echo "Running Unit Tests"
             // TBD: Execute Unit Tests
             sh "${mvnCmd} test"
               // This next step is optional.
               // It displays the results of tests in the Jenkins Task Overview
               //step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+              }
             }
-          }
       // Using Maven to call SonarQube for Code Analysis
-        stage('Code Analysis') {
-          steps {
-            echo "Running Code Analysis"
-            // TBD: Execute Sonarqube Tests
-            sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-gpte-hw-cicd.apps.na311.openshift.opentlc.com/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag}"
+          stage('Code Analysis') {
+            steps {
+              echo "Running Code Analysis"
+              // TBD: Execute Sonarqube Tests
+              sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-gpte-hw-cicd.apps.na311.openshift.opentlc.com/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${devTag}"
+          }
         }
       }
     }
-  }
 
       // Publish the built war file to Nexus
       stage('Publish to Nexus') {
