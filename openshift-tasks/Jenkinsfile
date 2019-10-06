@@ -237,6 +237,11 @@ stage('Copy Image to Nexus container registry') {
     }
   }
 
+}
+}
+}
+
+
 // Convenience Functions to read version from the pom.xml
 // Do not change anything below this line.
 // --------------------------------------------------------
