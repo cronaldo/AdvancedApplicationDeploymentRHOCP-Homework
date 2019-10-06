@@ -41,11 +41,8 @@ podTemplate(
       // Do not run tests in this step
       stage('Build war') {
         // TBD: Execute Maven Build
-        steps {
           echo "Building version ${devTag}"
-
           sh "${mvnCmd} clean package -DskipTests=true"
-        }
       }
 
       // TBD: The next two stages should run in parallel
