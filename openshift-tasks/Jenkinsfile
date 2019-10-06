@@ -234,7 +234,7 @@ stage('Copy Image to Nexus container registry') {
     }
   }
 
-}
+
 }
 }
 
