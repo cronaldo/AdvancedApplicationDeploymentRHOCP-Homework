@@ -15,7 +15,7 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 # Set up Jenkins with sufficient resources
 # TBD
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi --param DISABLE_ADMINISTRATIVE_MONITORS=true -n ${GUID}-jenkins
-oc set resources dc jenkins --limits=memory=2Gi,cpu=2 --requests=memory=1Gi,cpu=500m -n ${GUID}-jenkins
+oc set resources dc jenkins --limits=memory=4Gi,cpu=2 --requests=memory=1Gi,cpu=500m -n ${GUID}-jenkins
 
 # Create custom agent container image with skopeo
 # TBD
@@ -37,17 +37,17 @@ items:
       contextDir: "openshift-tasks"
       type: "Git"
       git:
-        uri: "https://github.com/felix-centenera/AdvancedApplicationDeploymentRHOCP-Homework.git"
+        uri: ${REPO}
     strategy:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:
         env:
-        - name: GUID
-          value: $(GUID)
-        - name: REPO
-          value: $(REPO)
-        - name: CLUSTER
-          value: $(CLUSTER)
+        - name: "GUID"
+          value: ${GUID}
+        - name: "REPO"
+          value: ${REPO}
+        - name: "CLUSTER"
+          value: ${CLUSTER}
         jenkinsfilePath: Jenkinsfile
 kind: List
 metadata: []" | oc create -f - -n ${GUID}-jenkins
