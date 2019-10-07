@@ -206,7 +206,6 @@ stage('Copy Image to Nexus container registry') {
       }
 
       stage('Switch over to new Version') {
-    steps {
       input "Switch Production?"
 
       echo "Switching Production application to ${destApp}."
@@ -219,7 +218,6 @@ stage('Copy Image to Nexus container registry') {
           }
         }
       }
-    }
   }
 
 }
