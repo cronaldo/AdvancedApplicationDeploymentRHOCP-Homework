@@ -147,7 +147,7 @@ stage('Copy Image to Nexus container registry') {
 
         // Tag the ºbuilt image with the production tag.
         openshift.withCluster() {
-          openshift.withProject("${prodProject}") {
+          openshift.withProject("${GUID}-tasks-prod") {
               openshift.tag("${GUID}-tasks-dev/tasks:${devTag}", "${GUID}-tasks-dev/tasks:${prodTag}")
      }
     }
