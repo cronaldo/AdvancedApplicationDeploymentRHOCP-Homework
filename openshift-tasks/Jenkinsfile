@@ -99,17 +99,16 @@ podTemplate(
 
   // Deploy the built image to the Development Environment.
 stage('Deploy to Dev') {
-steps {
   echo "Deploying container image to Development Project"
   script {
     // Update the Image on the Development Deployment Config
     openshift.withCluster() {
-      openshift.withProject("${devProject}") {
+      openshift.withProject("${GUID}-tasks-dev") {
         // OpenShift 4
         //openshift.set("image", "dc/tasks", "tasks=image-registry.openshift-image-registry.svc:5000/${devProject}/tasks:${devTag}")
 
         // For OpenShift 3 use this:
-         openshift.set("image", "dc/tasks", "tasks=docker-registry.default.svc:5000/${devProject}/tasks:${devTag}")
+         openshift.set("image", "dc/tasks", "tasks=docker-registry.default.svc:5000/${GUID}-tasks-dev/tasks:${devTag}")
 
         // Update the Config Map which contains the users for the Tasks application
         // (just in case the properties files changed in the latest commit)
@@ -133,29 +132,26 @@ steps {
     }
   }
 }
-}
 
 
 
 // Copy Image to Nexus container registry
 stage('Copy Image to Nexus container registry') {
-  steps {
     echo "Copy image to Nexus container registry"
       script {
         // OpenShift 4
         //sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:admin docker://image-registry.openshift-image-registry.svc.cluster.local:5000/${devProject}/tasks:${devTag} docker://nexus-registry-3b98-nexus.apps.cluster-768d.sandbox1012.opentlc.com/tasks:${devTag}"
 
         // OpenShift 3
-        sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:redhat docker://docker-registry.default.svc.cluster.local:5000/${devProject}/tasks:${devTag} docker://nexus3-registry.gpte-hw-cicd.svc.cluster.local:5000/tasks:${devTag}"
+        sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:redhat docker://docker-registry.default.svc.cluster.local:5000/${GUID}-tasks-dev/tasks:${devTag} docker://nexus3-registry.gpte-hw-cicd.svc.cluster.local:5000/tasks:${devTag}"
 
         // Tag the ºbuilt image with the production tag.
         openshift.withCluster() {
           openshift.withProject("${prodProject}") {
-              openshift.tag("${devProject}/tasks:${devTag}", "${devProject}/tasks:${prodTag}")
+              openshift.tag("${GUID}-tasks-dev/tasks:${devTag}", "${GUID}-tasks-dev/tasks:${prodTag}")
      }
     }
    }
-  }
  }
       // Blue/Green Deployment into Production
       // -------------------------------------
@@ -171,7 +167,7 @@ stage('Copy Image to Nexus container registry') {
           echo "Blue/Green Deployment"
           script {
             openshift.withCluster() {
-              openshift.withProject("${prodProject}") {
+              openshift.withProject("${GUID}-tasks-prod") {
                 activeApp = openshift.selector("route", "tasks").object().spec.to.name
                 if (activeApp == "tasks-green") {
                   destApp = "tasks-blue"
@@ -185,7 +181,7 @@ stage('Copy Image to Nexus container registry') {
                 // OpenShift 4
                 //dc.spec.template.spec.containers[0].image="image-registry.openshift-image-registry.svc:5000/${devProject}/tasks:${prodTag}"
                 // OpenShift 3
-                dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/tasks:${prodTag}"
+                dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${GUID}-tasks-dev/tasks:${prodTag}"
 
                 openshift.apply(dc)
 
