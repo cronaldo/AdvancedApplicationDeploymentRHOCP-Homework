@@ -163,7 +163,6 @@ stage('Copy Image to Nexus container registry') {
         //      Set Image, Set VERSION
         //      Deploy into the other application
         //      Make sure the application is running and ready before proceeding
-        steps {
           echo "Blue/Green Deployment"
           script {
             openshift.withCluster() {
@@ -204,7 +203,6 @@ stage('Copy Image to Nexus container registry') {
               }
             }
           }
-        }
       }
 
       stage('Switch over to new Version') {
