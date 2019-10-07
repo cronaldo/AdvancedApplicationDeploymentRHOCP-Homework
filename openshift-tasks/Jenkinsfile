@@ -211,7 +211,7 @@ stage('Copy Image to Nexus container registry') {
       echo "Switching Production application to ${destApp}."
       script {
         openshift.withCluster() {
-          openshift.withProject("${prodProject}") {
+          openshift.withProject("${GUID}-tasks-prod") {
             def route = openshift.selector("route/tasks").object()
             route.spec.to.name="${destApp}"
             openshift.apply(route)
