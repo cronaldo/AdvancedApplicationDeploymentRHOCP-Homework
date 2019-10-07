@@ -86,7 +86,7 @@ podTemplate(
       // Jenkins workspace
       script {
         openshift.withCluster() {
-          openshift.withProject("${devProject}") {
+          openshift.withProject("${GUID}-tasks-dev") {
             openshift.selector("bc", "tasks").startBuild("--from-file=./target/openshift-tasks.war", "--wait=true")
 
             // OR use the file you just published into Nexus:
@@ -94,8 +94,8 @@ podTemplate(
             openshift.tag("tasks:latest", "tasks:${devTag}")
           }
         }
-      }  
-  }
+      }
+    }
 
   // Deploy the built image to the Development Environment.
 stage('Deploy to Dev') {
